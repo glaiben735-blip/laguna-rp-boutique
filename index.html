@@ -303,15 +303,15 @@
     </div>
 
     <div class="tabs">
-      <span class="tab active">Tout</span>
-      <span class="tab">Véhicules</span>
-      <span class="tab">Cosmétique</span>
-      <span class="tab">Confort</span>
-      <span class="tab">Garages</span>
+      <span class="tab active" data-filter="tout">Tout</span>
+      <span class="tab" data-filter="vehicules">Véhicules</span>
+      <span class="tab" data-filter="cosmetique">Cosmétique</span>
+      <span class="tab" data-filter="confort">Confort</span>
+      <span class="tab" data-filter="garages">Garages</span>
     </div>
 
     <div class="grid">
-      <div class="card">
+      <div class="card" data-category="garages">
         <div class="card-top"><span class="tagflag hot">Populaire</span><span class="glyph">◆</span></div>
         <div class="card-body">
           <h4>Emplacement garage +1</h4>
@@ -319,7 +319,7 @@
           <div class="card-foot"><span class="price">3,99€</span><a href="#" class="card-buy buy-trigger" data-product-id="garage_slot">Acheter</a></div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" data-category="cosmetique">
         <div class="card-top"><span class="tagflag">Cosmétique</span><span class="glyph">◆</span></div>
         <div class="card-body">
           <h4>Plaque personnalisée</h4>
@@ -327,7 +327,7 @@
           <div class="card-foot"><span class="price">5,99€</span><a href="#" class="card-buy buy-trigger" data-product-id="plaque_perso">Acheter</a></div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" data-category="vehicules">
         <div class="card-top"><span class="tagflag hot">Nouveau</span><span class="glyph">◆</span></div>
         <div class="card-body">
           <h4>Véhicule VIP Abysse</h4>
@@ -335,7 +335,7 @@
           <div class="card-foot"><span class="price">14,99€</span><a href="#" class="card-buy buy-trigger" data-product-id="vehicule_abysse">Acheter</a></div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" data-category="confort">
         <div class="card-top"><span class="tagflag">Confort</span><span class="glyph">◆</span></div>
         <div class="card-body">
           <h4>Renommage de personnage</h4>
@@ -343,7 +343,7 @@
           <div class="card-foot"><span class="price">2,99€</span><a href="#" class="card-buy buy-trigger" data-product-id="renommage">Acheter</a></div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" data-category="cosmetique">
         <div class="card-top"><span class="tagflag">Cosmétique</span><span class="glyph">◆</span></div>
         <div class="card-body">
           <h4>Tenue exclusive Nacre</h4>
@@ -351,7 +351,7 @@
           <div class="card-foot"><span class="price">4,99€</span><a href="#" class="card-buy buy-trigger" data-product-id="tenue_nacre">Acheter</a></div>
         </div>
       </div>
-      <div class="card">
+      <div class="card" data-category="confort">
         <div class="card-top"><span class="tagflag">Confort</span><span class="glyph">◆</span></div>
         <div class="card-body">
           <h4>File d'attente prioritaire (30j)</h4>
@@ -546,6 +546,15 @@
     tab.addEventListener('click', function(){
       document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
       tab.classList.add('active');
+
+      var filter = tab.dataset.filter;
+      document.querySelectorAll('#boutique .card').forEach(function(card){
+        if (filter === 'tout' || card.dataset.category === filter) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     });
   });
 </script>
