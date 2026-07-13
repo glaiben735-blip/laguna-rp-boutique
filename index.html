@@ -394,6 +394,36 @@
   .bundle:hover{transform:translateY(-4px); border-color:var(--gold-dim);}
   .bundle .save{display:inline-block; background:rgba(231,166,60,0.12); color:var(--gold); font-size:11.5px; font-weight:800; padding:4px 12px; border-radius:999px; margin-bottom:14px;}
   .bundle h4{font-size:22px; margin-bottom:8px;}
+
+  /* ===== MÉDAILLON / GEMME (packs & abonnements) ===== */
+  @keyframes coinFloat{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-7px) rotate(-2deg); }
+  }
+  .bundle-head{display:flex; align-items:flex-start; gap:18px; margin-bottom:6px;}
+  .bundle-coin, .sub-coin{
+    position:relative; flex-shrink:0; width:74px; height:74px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .bundle-coin::before, .sub-coin::before{
+    content:""; position:absolute; inset:-14px; border-radius:50%;
+    background:radial-gradient(circle, rgba(43,196,176,0.22), transparent 70%);
+    filter:blur(4px); z-index:0;
+  }
+  .bundle-coin img, .sub-coin img{
+    position:relative; z-index:1; width:100%; height:100%; object-fit:contain;
+    filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45));
+    animation:coinFloat 3.6s ease-in-out infinite;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .bundle:hover .bundle-coin img, .sub-card:hover .sub-coin img{
+    transform:scale(1.1) rotate(-4deg);
+  }
+  .bundle-head-text{ flex:1; min-width:0; }
+  .bundle-head-text .save{ margin-bottom:8px; }
+  .bundle-head-text h4{ margin-bottom:0; }
+  .sub-head{ display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+  .sub-head-text{ flex:1; min-width:0; }
   .bundle p{font-size:13px; color:var(--text-1); margin-bottom:16px;}
   .bundle .included{font-size:12.5px; color:var(--text-2); margin-bottom:16px;}
   .bundle .included b{color:var(--text-1); font-weight:600;}
@@ -589,8 +619,13 @@
 
     <div class="subs">
       <div class="sub-card">
-        <div class="sub-tier">Starter</div>
-        <h3>Alizé</h3>
+        <div class="sub-head">
+          <div class="sub-coin"><img src="images/products/sub_alize_coin.png" alt="" loading="lazy" onerror="this.parentElement.style.display='none'"></div>
+          <div class="sub-head-text">
+            <div class="sub-tier">Starter</div>
+            <h3>Alizé</h3>
+          </div>
+        </div>
         <div class="price-block"><span class="final">4,99€</span><span class="cycle">/mois</span></div>
         <div class="promo">1er mois à -50% avec le code BIENVENUE</div>
         <ul class="feats">
@@ -604,8 +639,13 @@
 
       <div class="sub-card pop">
         <span class="sub-badge">Populaire</span>
-        <div class="sub-tier">All-Access</div>
-        <h3>Corail</h3>
+        <div class="sub-head">
+          <div class="sub-coin"><img src="images/products/sub_corail_coin.png" alt="" loading="lazy" onerror="this.parentElement.style.display='none'"></div>
+          <div class="sub-head-text">
+            <div class="sub-tier">All-Access</div>
+            <h3>Corail</h3>
+          </div>
+        </div>
         <div class="price-block"><span class="final">9,99€</span><span class="cycle">/mois</span></div>
         <div class="promo">Économise ~40% vs achats à l'unité</div>
         <ul class="feats">
@@ -702,16 +742,26 @@
 
     <div class="bundles">
       <div class="bundle">
-        <span class="save">Économise 32%</span>
-        <h4>Pack Nouveau Départ</h4>
+        <div class="bundle-head">
+          <div class="bundle-coin"><img src="images/products/pack_nouveau_depart_coin.png" alt="" loading="lazy" onerror="this.parentElement.style.display='none'"></div>
+          <div class="bundle-head-text">
+            <span class="save">Économise 32%</span>
+            <h4>Pack Nouveau Départ</h4>
+          </div>
+        </div>
         <p>Tout pour bien démarrer sur Laguna : garage, plaque et renommage.</p>
         <div class="included"><b>Inclus :</b> Emplacement garage +1, Plaque personnalisée, Renommage de personnage</div>
         <div class="bundle-price"><span class="old">12,97€</span><span class="new">8,99€</span></div>
         <a href="#" class="buy buy-trigger" data-product-id="pack_nouveau_depart">Acheter le pack</a>
       </div>
       <div class="bundle">
-        <span class="save">Économise 28%</span>
-        <h4>Pack Collection Abysse</h4>
+        <div class="bundle-head">
+          <div class="bundle-coin"><img src="images/products/pack_collection_abysse_coin.png" alt="" loading="lazy" onerror="this.parentElement.style.display='none'"></div>
+          <div class="bundle-head-text">
+            <span class="save">Économise 28%</span>
+            <h4>Pack Collection Abysse</h4>
+          </div>
+        </div>
         <p>La collection complète du palier Abysse : véhicule, tenue et plaque.</p>
         <div class="included"><b>Inclus :</b> Véhicule VIP Abysse, Tenue exclusive Nacre, Plaque personnalisée</div>
         <div class="bundle-price"><span class="old">25,97€</span><span class="new">18,99€</span></div>
