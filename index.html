@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Laguna RP — Boutique</title>
-<link rel="icon" type="image/png" href="https://imgg.fr/r/rnc5CW9Y.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-0:#071A1B; --bg-1:#0C2426; --bg-2:#123234;
@@ -15,10 +14,26 @@
     --turquoise:#2BC4B0; --turquoise-dim:#1C8A7C;
     --gold:#E7A63C; --gold-dim:#B27F27;
     --text-0:#EAF6F3; --text-1:#A9C6C1; --text-2:#6E938D;
+    --bio:#8CFFE4;
+    --mono:'JetBrains Mono', monospace;
+    /* zones de profondeur, de la surface vers la fosse */
+    --z-surface:#0A2224; --z-recif:#081D1E; --z-lagon:#061719; --z-abysse:#041113; --z-fosse:#02090A;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{background:var(--bg-0); color:var(--text-0); font-family:'Manrope',sans-serif; line-height:1.6;}
+
+  /* ===== ASSOMBRISSEMENT PROGRESSIF PAR ZONE DE PROFONDEUR ===== */
+  [data-zone]{ transition:background-color .6s ease; }
+  [data-zone="surface"]{ background:var(--z-surface); }
+  [data-zone="recif"]{ background:var(--z-recif); }
+  [data-zone="lagon"]{ background:var(--z-lagon); }
+  [data-zone="abysse"]{ background:var(--z-abysse); }
+  [data-zone="fosse"]{ background:var(--z-fosse); }
+  section[data-zone]::before{
+    content:""; display:block; height:1px; margin:0 auto 0; max-width:1160px;
+    background:linear-gradient(90deg, transparent, var(--line), transparent);
+  }
   h1,h2,h3,.display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.04em; line-height:0.95; font-weight:400;}
   .wrap{max-width:1160px; margin:0 auto; padding:0 32px;}
   a{color:inherit; text-decoration:none;}
@@ -38,24 +53,150 @@
 
   .badge-pill{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--gold); border:1px solid var(--gold-dim); background:rgba(231,166,60,0.08); padding:6px 16px; border-radius:999px; letter-spacing:0.03em;}
 
-  .hero{padding:110px 0 70px; text-align:center;}
+  .hero{padding:110px 0 70px; text-align:center; position:relative; overflow:hidden; background:radial-gradient(ellipse at 50% -10%, rgba(43,196,176,0.10), transparent 60%);}
+  .hero .wrap{position:relative; z-index:1;}
   .hero h1{font-size:88px; color:var(--text-0); margin:26px 0 0;}
   .hero h1 em{font-style:normal; color:var(--turquoise);}
   .hero p.sub{max-width:580px; margin:24px auto 34px; color:var(--text-1); font-size:17px;}
   .hero-ctas{display:flex; gap:16px; justify-content:center; margin-bottom:20px; flex-wrap:wrap;}
-  .btn-primary{background:var(--turquoise); color:#04211E; padding:15px 30px; border-radius:6px; font-weight:700; font-size:15px;}
-  .btn-ghost{border:1px solid var(--line); padding:15px 30px; border-radius:6px; font-weight:600; font-size:15px; color:var(--text-1);}
+
+  /* ===== BUTTON ANIMATIONS ===== */
+  @keyframes pulseGlow{
+    0%,100%{ box-shadow:0 0 0 0 rgba(43,196,176,0.35); }
+    50%{ box-shadow:0 0 0 8px rgba(43,196,176,0); }
+  }
+  @keyframes floatIn{
+    from{ opacity:0; transform:translateY(18px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes rippleFx{
+    to{ transform:scale(2.6); opacity:0; }
+  }
+
+  .btn-primary,.btn-ghost,.sub-buy,.card-buy,.bundle .buy,.nav-cta{
+    position:relative; overflow:hidden; isolation:isolate;
+    transition:transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease, background .22s ease, border-color .22s ease, color .22s ease;
+    will-change:transform;
+  }
+  /* shine sweep on hover */
+  .btn-primary::before,.sub-buy::before,.card-buy::before,.bundle .buy::before,.nav-cta::before{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.28) 50%, transparent 80%);
+    transform:translateX(-120%); transition:transform .55s ease;
+  }
+  .btn-primary:hover::before,.sub-buy:hover::before,.card-buy:hover::before,.bundle .buy:hover::before,.nav-cta:hover::before{
+    transform:translateX(120%);
+  }
+  .btn-primary > *, .sub-buy > *, .card-buy > *, .bundle .buy > *, .nav-cta > *{ position:relative; z-index:2; }
+
+  .btn-primary{background:var(--turquoise); color:#04211E; padding:15px 30px; border-radius:6px; font-weight:700; font-size:15px; animation:pulseGlow 2.4s ease-in-out 2;}
+  .btn-primary:hover{transform:translateY(-3px) scale(1.03); box-shadow:0 10px 26px rgba(43,196,176,0.35);}
+  .btn-primary:active{transform:translateY(-1px) scale(0.98);}
+
+  .btn-ghost{border:1px solid var(--line); padding:15px 30px; border-radius:6px; font-weight:600; font-size:15px; color:var(--text-1); transition:transform .22s cubic-bezier(.2,.8,.2,1), border-color .22s ease, color .22s ease, background .22s ease;}
+  .btn-ghost:hover{transform:translateY(-3px); border-color:var(--turquoise-dim); color:var(--text-0); background:rgba(43,196,176,0.06);}
+  .btn-ghost:active{transform:translateY(-1px) scale(0.98);}
+
+  .nav-cta{background:var(--turquoise); color:#04211E; padding:10px 20px; border-radius:6px; font-weight:700; font-size:14px;}
+  .nav-cta:hover{transform:translateY(-2px) scale(1.04); box-shadow:0 8px 18px rgba(43,196,176,0.3);}
+  .nav-cta:active{transform:scale(0.96);}
+
+  .ripple-dot{position:absolute; z-index:1; border-radius:50%; background:rgba(255,255,255,0.5); transform:scale(0); animation:rippleFx .6s ease-out forwards; pointer-events:none;}
+
+  /* ===== SCROLL REVEAL (fondu premium) ===== */
+  .reveal{
+    opacity:0;
+    transform:translateY(30px) scale(0.94);
+    filter:blur(6px);
+    transition:opacity .8s cubic-bezier(.16,.9,.28,1),
+               transform .8s cubic-bezier(.16,.9,.28,1),
+               filter .8s cubic-bezier(.16,.9,.28,1);
+    transition-delay:var(--rd, 0s);
+  }
+  .reveal.in{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    filter:blur(0);
+  }
+  /* les cartes gardent leur propre lift au survol une fois révélées */
+  .reveal.in.card:hover{ transform:translateY(-4px) scale(1); }
+  .reveal.in.bundle:hover{ transform:translateY(-4px) scale(1); }
+
+  .reveal-head{
+    opacity:0; transform:translateY(16px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal-head.in{ opacity:1; transform:translateY(0); }
+
+  /* fondu d'entrée du hero au chargement de page */
+  @keyframes heroIn{
+    from{ opacity:0; transform:translateY(22px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .hero .badge-pill{ opacity:0; animation:heroIn .7s ease .05s forwards; }
+  .hero h1{ opacity:0; animation:heroIn .8s ease .15s forwards; }
+  .hero p.sub{ opacity:0; animation:heroIn .8s ease .3s forwards; }
+  .hero-ctas{ opacity:0; animation:heroIn .8s ease .45s forwards; }
+  .hero-sub-links{ opacity:0; animation:heroIn .8s ease .6s forwards; }
   .hero-sub-links{font-size:13.5px; color:var(--text-2); margin-top:14px;}
   .hero-sub-links a{color:var(--turquoise); font-weight:600;}
 
-  .trustbar{display:flex; justify-content:center; gap:44px; flex-wrap:wrap; padding:30px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--bg-1);}
+  /* ===== MANOMÈTRE DE PROFONDEUR (signature) ===== */
+  .depth-gauge{
+    position:fixed; left:28px; top:50%; transform:translateY(-50%);
+    z-index:55; display:flex; flex-direction:column; align-items:center;
+    height:280px; font-family:var(--mono);
+  }
+  .depth-gauge .track{
+    position:relative; width:2px; flex:1; background:var(--line);
+    border-radius:2px; overflow:visible;
+  }
+  .depth-gauge .fill{
+    position:absolute; top:0; left:0; width:100%; height:0%;
+    background:linear-gradient(180deg, var(--bio), var(--turquoise-dim));
+    border-radius:2px; transition:height .1s linear;
+  }
+  .depth-gauge .marker{
+    position:absolute; left:50%; top:0%; transform:translate(-50%,-50%);
+    width:9px; height:9px; border-radius:50%;
+    background:var(--bio); box-shadow:0 0 0 4px rgba(140,255,228,0.15), 0 0 12px rgba(140,255,228,0.6);
+    transition:top .1s linear;
+  }
+  .depth-gauge .readout{
+    margin-top:14px; font-size:11px; color:var(--bio); letter-spacing:0.04em;
+    display:flex; flex-direction:column; align-items:center; gap:2px; white-space:nowrap;
+  }
+  .depth-gauge .readout .num{font-size:13px; font-weight:600;}
+  .depth-gauge .readout .zone{color:var(--text-2); font-size:9.5px; text-transform:uppercase; letter-spacing:0.12em;}
+  .depth-gauge .top-label{margin-bottom:14px; font-size:9.5px; color:var(--text-2); text-transform:uppercase; letter-spacing:0.12em; writing-mode:vertical-rl;}
+  @media (max-width:1240px){ .depth-gauge{display:none;} }
+
+  /* ===== GRAIN AMBIANT ===== */
+  .grain-overlay{
+    position:fixed; inset:0; z-index:2; pointer-events:none; opacity:0.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* ===== BULLES AMBIANTES (hero) ===== */
+  @keyframes riseUp{
+    from{ transform:translateY(0) translateX(0); opacity:0; }
+    10%{ opacity:0.5; }
+    90%{ opacity:0.35; }
+    to{ transform:translateY(-420px) translateX(var(--drift,10px)); opacity:0; }
+  }
+  .bubbles{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;}
+  .bubbles span{
+    position:absolute; bottom:-20px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(140,255,228,0.5), rgba(43,196,176,0.05));
+    animation:riseUp linear infinite;
+  }
   .trustbar div{font-size:13px; color:var(--text-2); display:flex; align-items:center; gap:8px;}
   .trustbar strong{color:var(--text-0);}
 
   .section{padding:96px 0;}
   .section-head{max-width:600px; margin:0 auto 50px; text-align:center;}
   .section-head.left{text-align:left; margin-left:0;}
-  .kicker{color:var(--turquoise); font-size:13px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:10px; display:block;}
+  .kicker{font-family:var(--mono); color:var(--turquoise); font-size:12px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:10px; display:block;}
   .section-head h2{font-size:44px; margin-bottom:12px;}
   .section-head p{color:var(--text-1); font-size:15px;}
 
@@ -80,14 +221,17 @@
   .sub-tier{font-size:12.5px; color:var(--turquoise); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;}
   .sub-card h3{font-size:30px; margin-bottom:14px;}
   .price-block{display:flex; align-items:baseline; gap:10px; margin-bottom:6px;}
-  .price-block .final{font-family:'Bebas Neue'; font-size:34px; color:var(--text-0);}
+  .price-block .final{font-family:var(--mono); font-weight:600; font-size:30px; color:var(--text-0); letter-spacing:-0.02em;}
   .price-block .cycle{color:var(--text-2); font-size:13px;}
   .promo{font-size:12.5px; color:var(--gold); margin-bottom:20px;}
   .sub-card .feats{margin:20px 0 26px; font-size:13.5px; color:var(--text-1);}
   .sub-card .feats li{padding:7px 0; border-top:1px solid var(--line); display:flex; gap:8px;}
   .sub-card .feats li:first-child{border-top:none;}
   .sub-buy{display:block; text-align:center; padding:13px; border-radius:6px; font-weight:700; font-size:14px; border:1px solid var(--turquoise-dim); color:var(--turquoise);}
+  .sub-buy:hover{background:rgba(43,196,176,0.12); transform:translateY(-2px); box-shadow:0 8px 20px rgba(43,196,176,0.18);}
+  .sub-buy:active{transform:translateY(0) scale(0.98);}
   .sub-card.pop .sub-buy{background:var(--gold); color:#3A2506; border-color:var(--gold);}
+  .sub-card.pop .sub-buy:hover{background:#f0b354; box-shadow:0 8px 20px rgba(231,166,60,0.3);}
 
   /* FILTER TABS */
   .tabs{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:44px;}
@@ -106,13 +250,18 @@
   .card-body h4{font-size:17px; font-weight:700; margin-bottom:6px;}
   .card-body p{font-size:12.5px; color:var(--text-2); flex:1; margin-bottom:16px;}
   .card-foot{display:flex; align-items:center; justify-content:space-between;}
-  .card-foot .price{font-family:'Bebas Neue'; font-size:22px; color:var(--text-0);}
+  .card-foot .price{font-family:var(--mono); font-weight:600; font-size:19px; color:var(--text-0); letter-spacing:-0.02em;}
   .card-buy{font-size:12.5px; font-weight:700; padding:9px 16px; border-radius:6px; border:1px solid var(--turquoise-dim); color:var(--turquoise);}
+  .card-buy:hover{background:var(--turquoise); color:#04211E; box-shadow:0 6px 16px rgba(43,196,176,0.3);}
+  .card-buy:active{transform:scale(0.96);}
+  .card-top .glyph{transition:transform .3s ease;}
+  .card:hover .card-top .glyph{transform:scale(1.08) rotate(-2deg);}
   .show-more{display:block; margin:36px auto 0; font-size:13.5px; color:var(--text-1); border:1px solid var(--line); padding:12px 26px; border-radius:6px; text-align:center; width:fit-content;}
 
   /* BUNDLES */
   .bundles{display:grid; grid-template-columns:repeat(2,1fr); gap:20px;}
-  .bundle{background:var(--bg-1); border:1px solid var(--line); border-radius:14px; padding:26px;}
+  .bundle{background:var(--bg-1); border:1px solid var(--line); border-radius:14px; padding:26px; transition:transform .25s ease, border-color .25s ease;}
+  .bundle:hover{transform:translateY(-4px); border-color:var(--gold-dim);}
   .bundle .save{display:inline-block; background:rgba(231,166,60,0.12); color:var(--gold); font-size:11.5px; font-weight:800; padding:4px 12px; border-radius:999px; margin-bottom:14px;}
   .bundle h4{font-size:22px; margin-bottom:8px;}
   .bundle p{font-size:13px; color:var(--text-1); margin-bottom:16px;}
@@ -122,6 +271,8 @@
   .bundle-price .old{text-decoration:line-through; color:var(--text-2); font-size:14px;}
   .bundle-price .new{font-family:'Bebas Neue'; font-size:30px;}
   .bundle .buy{margin-top:18px; display:block; text-align:center; padding:12px; border-radius:6px; font-weight:700; font-size:13.5px; border:1px solid var(--turquoise-dim); color:var(--turquoise);}
+  .bundle .buy:hover{background:var(--turquoise); color:#04211E; box-shadow:0 6px 16px rgba(43,196,176,0.3);}
+  .bundle .buy:active{transform:scale(0.97);}
 
   /* STEPS */
   .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
@@ -183,9 +334,23 @@
 </head>
 <body>
 
+<div class="grain-overlay"></div>
+
+<aside class="depth-gauge" id="depthGauge">
+  <span class="top-label">Profondeur</span>
+  <div class="track">
+    <div class="fill" id="depthFill"></div>
+    <div class="marker" id="depthMarker"></div>
+  </div>
+  <div class="readout">
+    <span class="num" id="depthNum">0 m</span>
+    <span class="zone" id="depthZone">Surface</span>
+  </div>
+</aside>
+
 <nav>
   <div class="wrap">
-    <div class="logo">LAGUNA</span> RP</div>
+    <div class="logo">LAGU<span>NA</span> RP</div>
     <div class="nav-links">
       <a href="#packs">Abonnements</a>
       <a href="#boutique">Boutique</a>
@@ -193,14 +358,15 @@
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-      <a href="https://discord.gg/5gCVRQqfS" target="_blank" rel="noopener" class="nav-discord">Discord</a>
+      <a href="https://discord.gg/RMtgpvYNyT" target="_blank" rel="noopener" class="nav-discord">Discord</a>
       <a href="#packs" class="nav-cta">Voir les offres</a>
     </div>
   </div>
 </nav>
 
-<section class="hero">
+<section class="hero" data-zone="surface">
   <div class="wrap">
+    <div class="bubbles" id="heroBubbles"></div>
     <span class="badge-pill">◆ Serveur FiveM · Roleplay francophone</span>
     <h1>La boutique<br>officielle <em>Laguna</em></h1>
     <p class="sub">Véhicules, tenues, emplacements et avantages de jeu pour soutenir le serveur. Livraison automatique en jeu, quelques secondes après l'achat.</p>
@@ -212,14 +378,14 @@
   </div>
 </section>
 
-<div class="trustbar">
+<div class="trustbar" data-zone="surface">
   <div><strong>4.9/5</strong>&nbsp;satisfaction joueurs</div>
   <div><strong>24/7</strong>&nbsp;serveur en ligne</div>
   <div><strong>100%</strong>&nbsp;livraison automatique</div>
   <div><strong>FR</strong>&nbsp;support Discord</div>
 </div>
 
-<section class="section" id="packs">
+<section class="section" id="packs" data-zone="recif">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Le plus avantageux</span>
@@ -254,7 +420,7 @@
   </div>
 </section>
 
-<section class="section" style="padding-top:0;">
+<section class="section" data-zone="recif" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Abonnements mensuels</span>
@@ -295,7 +461,7 @@
   </div>
 </section>
 
-<section class="section" id="boutique" style="padding-top:0;">
+<section class="section" id="boutique" data-zone="lagon" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Boutique</span>
@@ -366,7 +532,7 @@
   </div>
 </section>
 
-<section class="section" id="bundles" style="padding-top:0;">
+<section class="section" id="bundles" data-zone="abysse" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Bon plan</span>
@@ -395,7 +561,7 @@
   </div>
 </section>
 
-<section class="section" style="padding-top:0;">
+<section class="section" data-zone="abysse" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Simple et rapide</span>
@@ -421,7 +587,7 @@
   </div>
 </section>
 
-<section class="section" id="faq" style="padding-top:0;">
+<section class="section" id="faq" data-zone="fosse" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Questions fréquentes</span>
@@ -448,7 +614,7 @@
   </div>
 </section>
 
-<section class="section" style="padding-top:0;">
+<section class="section" data-zone="fosse" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head">
       <span class="kicker">Avis joueurs</span>
@@ -474,7 +640,7 @@
   </div>
 </section>
 
-<section class="section" style="padding-top:0;">
+<section class="section" data-zone="fosse" style="padding-top:0;">
   <div class="wrap">
     <div class="newsletter">
       <h3>-10% sur ta première commande</h3>
@@ -487,7 +653,7 @@
   </div>
 </section>
 
-<footer>
+<footer data-zone="fosse">
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
@@ -497,7 +663,7 @@
       <div class="foot-col">
         <h5>Liens</h5>
         <ul>
-          <li><a href="https://discord.gg/5gCVRQqfS" target="_blank" rel="noopener">Discord</a></li>
+          <li><a href="https://discord.gg/RMtgpvYNyT" target="_blank" rel="noopener">Discord</a></li>
           <li><a href="#">Site principal</a></li>
           <li><a href="#">Règlement</a></li>
         </ul>
@@ -579,7 +745,7 @@
     <div id="buyStep2" style="display:none;">
       <h3 style="margin:0 0 12px; font-size:20px;">Commande #<span id="orderIdDisplay"></span> enregistrée ✅</h3>
       <p style="font-size:14px; line-height:1.6; color:#e8f3f0;">
-        Envoie <strong id="orderAmountDisplay"></strong> via <strong>TapTap Send <strong> Option <strong> Wave</strong> à :
+        Envoie <strong id="orderAmountDisplay"></strong> via <strong>TapTap Send <strong> Option <strong> Wave </strong> à :
       </p>
       <p style="font-size:15px; font-weight:700; background:#0b1614; border:1px solid #1f2e2b; padding:10px 12px; border-radius:6px;">
         <!-- TapTap Send -->
@@ -618,9 +784,107 @@ let currentProductId = null;
 document.querySelectorAll(".buy-trigger").forEach(btn => {
   btn.addEventListener("click", (e) => {
     e.preventDefault();
+    spawnRipple(e, btn);
     openBuyModal(btn.dataset.productId);
   });
 });
+
+// ---- Effet ripple au clic (tous les boutons d'action) ----
+function spawnRipple(e, el) {
+  const rect = el.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 1.4;
+  const dot = document.createElement("span");
+  dot.className = "ripple-dot";
+  dot.style.width = dot.style.height = `${size}px`;
+  dot.style.left = `${e.clientX - rect.left - size / 2}px`;
+  dot.style.top = `${e.clientY - rect.top - size / 2}px`;
+  el.appendChild(dot);
+  dot.addEventListener("animationend", () => dot.remove());
+}
+
+document.querySelectorAll(".btn-primary, .btn-ghost, .nav-cta").forEach(btn => {
+  btn.addEventListener("click", (e) => spawnRipple(e, btn));
+});
+
+// ---- Apparition en fondu au scroll (avec effet de vague/stagger) ----
+// Groupes de cartes : chaque grille anime ses enfants en cascade
+const revealGroups = [
+  ".subs",           // abonnements VIP
+  ".grid",           // cartes boutique
+  ".bundles",        // packs groupés
+  ".steps",          // étapes
+  ".reviews",        // avis
+];
+revealGroups.forEach(sel => {
+  document.querySelectorAll(sel).forEach(group => {
+    Array.from(group.children).forEach((el, i) => {
+      el.classList.add("reveal");
+      el.style.setProperty("--rd", `${Math.min(i * 0.12, 0.6)}s`);
+    });
+  });
+});
+// Le spotlight anime seul, sans stagger
+document.querySelectorAll(".spotlight").forEach(el => el.classList.add("reveal"));
+
+// Titres de section : petit fondu simple
+document.querySelectorAll(".section-head").forEach(el => el.classList.add("reveal-head"));
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("in");
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+
+document.querySelectorAll(".reveal, .reveal-head").forEach(el => revealObserver.observe(el));
+
+// ---- Manomètre de profondeur : suit le scroll et la zone active ----
+const ZONE_LABELS = { surface:"Surface", recif:"Récif", lagon:"Lagon", abysse:"Abysse", fosse:"Fosse" };
+const MAX_DEPTH = 820; // profondeur "fictive" affichée en bas de page (m)
+const depthFill = document.getElementById("depthFill");
+const depthMarker = document.getElementById("depthMarker");
+const depthNum = document.getElementById("depthNum");
+const depthZone = document.getElementById("depthZone");
+const zoneSections = Array.from(document.querySelectorAll("[data-zone]"));
+
+function updateDepthGauge() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? Math.min(Math.max(scrollTop / docHeight, 0), 1) : 0;
+
+  if (depthFill) depthFill.style.height = `${progress * 100}%`;
+  if (depthMarker) depthMarker.style.top = `${progress * 100}%`;
+  if (depthNum) depthNum.textContent = `${Math.round(progress * MAX_DEPTH)} m`;
+
+  // zone active = dernière section data-zone dont le haut a dépassé le milieu de l'écran
+  let current = "surface";
+  const mid = window.innerHeight * 0.4;
+  for (const el of zoneSections) {
+    if (el.getBoundingClientRect().top <= mid) current = el.dataset.zone;
+  }
+  if (depthZone) depthZone.textContent = ZONE_LABELS[current] || "Surface";
+}
+window.addEventListener("scroll", updateDepthGauge, { passive: true });
+window.addEventListener("resize", updateDepthGauge);
+updateDepthGauge();
+
+// ---- Bulles ambiantes dans le hero ----
+const bubbleHost = document.getElementById("heroBubbles");
+if (bubbleHost) {
+  const n = 16;
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement("span");
+    const size = 3 + Math.random() * 7;
+    b.style.width = b.style.height = `${size}px`;
+    b.style.left = `${Math.random() * 100}%`;
+    b.style.setProperty("--drift", `${(Math.random() - 0.5) * 60}px`);
+    b.style.animationDuration = `${7 + Math.random() * 8}s`;
+    b.style.animationDelay = `${Math.random() * 8}s`;
+    bubbleHost.appendChild(b);
+  }
+}
 
 function openBuyModal(productId) {
   const product = SHOP_PRODUCTS[productId];
